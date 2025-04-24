@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.inverter.auth.dto.UserDTO;
 import com.inverter.auth.entity.User;
 import com.inverter.auth.exception.SecurityException;
+import com.inverter.auth.service.MessageService;
 import com.inverter.auth.service.UserService;
 import com.inverter.auth.util.Response;
 
@@ -23,9 +24,11 @@ import jakarta.validation.Valid;
 public class UserController {
 
 	private UserService service;
+	private MessageService msg;
 
-	public UserController(UserService service) {
+	public UserController(UserService service, MessageService msg) {
 		this.service = service;
+		this.msg = msg;
 	}
 
 	@PostMapping
@@ -51,7 +54,7 @@ public class UserController {
         try {
             User user = service.activationAcount(token);
             
-            return ResponseEntity.ok(String.format("Conta ativada com sucesso, %s! Agora você pode fazer login.", user.getUsername()));
+            return ResponseEntity.ok(String.format(msg.get("template.email.activation.account.sucess"), user.getUsername()));
         } catch (RuntimeException | SecurityException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

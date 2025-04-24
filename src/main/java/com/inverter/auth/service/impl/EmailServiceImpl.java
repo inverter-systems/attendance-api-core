@@ -1,6 +1,9 @@
 package com.inverter.auth.service.impl;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -35,6 +38,7 @@ public class EmailServiceImpl implements EmailService {
     
     public void sendActivationEmail(String to, String token) throws SecurityException {
         try {
+        	Locale locale = LocaleContextHolder.getLocale();
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             
@@ -42,8 +46,8 @@ public class EmailServiceImpl implements EmailService {
             helper.setTo(to);
             helper.setSubject(msg.get("user.auth.email.activation.title"));
             
-            Context context = new Context();
-            context.setVariable("activationLink", baseUrl + "/activate?token=" + token);
+            Context context = new Context(locale);
+            context.setVariable("activationLink", baseUrl + "/api/auth/user/activate?lang=" + locale.toLanguageTag() + "&token=" + token);
             context.setVariable("userName", to);
             
             String content = templateEngine.process("activationEmail", context);

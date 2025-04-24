@@ -2,6 +2,7 @@ package com.inverter.auth.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import com.inverter.auth.entity.User;
 import com.inverter.auth.exception.SecurityException;
 import com.inverter.auth.exception.SecurityRuntimeException;
 import com.inverter.auth.repository.ActivationTokenRepository;
+import com.inverter.auth.repository.RoleRepository;
 import com.inverter.auth.repository.UserRepository;
 import com.inverter.auth.service.EmailService;
 import com.inverter.auth.service.MessageService;
@@ -27,21 +29,24 @@ import com.inverter.auth.util.Bcrypt;
 public class UserServiceImpl implements UserService, UserDetailsService {
 
 	private UserRepository repo;
+	private RoleRepository repoRole;
 	private ActivationTokenRepository repoActivationToken;
 	private TokenService tokenService;
 	private EmailService emailService;
 	private MessageService msg;
-	
+
 	@Value("${zone.off.set}")
 	private String zoneOffSet;
 
 	public UserServiceImpl(UserRepository repo, TokenService tokenService,
-			ActivationTokenRepository repoActivationToken, EmailService emailService, MessageService msg) {
+			ActivationTokenRepository repoActivationToken, EmailService emailService, MessageService msg,
+			RoleRepository repoRole) {
 		this.repo = repo;
 		this.tokenService = tokenService;
 		this.repoActivationToken = repoActivationToken;
 		this.emailService = emailService;
 		this.msg = msg;
+		this.repoRole = repoRole;
 	}
 
 	@Transactional
@@ -57,6 +62,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		User user;
 		try {
 			u.setPassword(Bcrypt.getHash(u.getPassword()));
+			u.setRoles(new ArrayList<>());
+			repoRole.findByName("CUSTOMER_ROLE").ifPresent(e -> u.getRoles().add(e));
 			user = repo.save(u);
 
 			// Gerar token de ativação
@@ -94,7 +101,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 			return user;
 		} catch (Exception e) {
-			throw new SecurityException(msg.get("user.auth.token.ativacao.generic.error", new Object[] { e.getMessage() }));
+			throw new SecurityException(
+					msg.get("user.auth.token.ativacao.generic.error", new Object[] { e.getMessage() }));
 		}
 	}
 

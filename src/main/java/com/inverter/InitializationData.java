@@ -38,6 +38,22 @@ public class InitializationData implements CommandLineRunner {
 			roles.add(role);
 		}
 		
+		if (repoRole.findByName("CUSTOMER_ROLE").isEmpty()) {
+			role = Role.builder()
+					   .name("CUSTOMER_ROLE")
+					   .description("Customer administrator, unrestricted access to customer functions")
+					   .build();
+			repoRole.save(role);
+		}
+		
+		if (repoRole.findByName("USER_ROLE").isEmpty()) {
+			role = Role.builder()
+					   .name("USER_ROLE")
+					   .description("System user, access to attendance records and queries")
+					   .build();
+			repoRole.save(role);
+		}
+		
 		if (repo.findByUsername("Admin").isEmpty()) {
 			repo.save(User.builder()
 						  .username("Admin")

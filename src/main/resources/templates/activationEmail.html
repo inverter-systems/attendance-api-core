@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Ativação de Conta</title>
+    <title th:text="#{template.email.activation.account}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-    <h1>Bem-vindo ao Sistema Attendance!</h1>
-    <p>Olá <span th:text="${userName}"></span>,</p>
-    <p>Obrigado por se registrar em nosso sistema. Para ativar sua conta, por favor clique no link abaixo:</p>
+    <h1 th:text="#{template.email.activation.account.welcome.title}">&nbsp</h1>
+    <p th:text="#{template.email.activation.account.text.hello}"></p><span th:text="${userName}"></span>,</p>
+    <p th:text="#{template.email.activation.account.text}"></p>
     <p>
         <a th:href="${activationLink}" th:text="${activationLink}"></a>
     </p>
-    <p>Este link é válido por 24 horas.</p>
-    <p>Se você não solicitou este registro, por favor ignore este email.</p>
-    <p>Atenciosamente,<br/>Equipe Attendance</p>
+    <p th:text="#{template.email.activation.account.text.valid.link}"></p>
+    <p th:text="#{template.email.activation.account.text.ignore.email}"></p>
+    <p th:text="#{template.email.activation.account.text.yours.sincerely}"></p>
+	<p th:text="#{template.email.activation.account.text.team}"></p>
 </body>
 </html>
