@@ -40,7 +40,7 @@ public class UserController {
 		try {
 			User user = service.create(userDto.buildUser());
 			response.setData(userDto.buildUserDTO(user));
-		} catch (SecurityException e) {
+		} catch (Exception e) {
 			response.getErrors().add(e.getMessage());
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);

@@ -9,6 +9,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.inverter.auth.repository.UserRepository;
+import com.inverter.auth.service.MessageService;
 import com.inverter.auth.service.TokenService;
 
 import jakarta.servlet.FilterChain;
@@ -21,11 +22,12 @@ public class FilterToken extends OncePerRequestFilter {
 
 	private TokenService tokenService;
 	private UserRepository userRepo;
+	private MessageService msg;
 
-	public FilterToken(TokenService tokenService, UserRepository userRepo) {
-		super();
+	public FilterToken(TokenService tokenService, UserRepository userRepo, MessageService msg) {
 		this.tokenService = tokenService;
 		this.userRepo = userRepo;
+		this.msg = msg;
 	}
 
 	@Override
@@ -43,7 +45,7 @@ public class FilterToken extends OncePerRequestFilter {
 					req.setAttribute("authentication","authenticated");
 				}
 			} else {
-				req.setAttribute("error", "Access denied! You must be authenticated in the system to access the requested URL");
+				req.setAttribute("error", msg.get("user.auth.user.error.access.denied"));
 			}
 		} catch (TokenExpiredException e) {
 			req.setAttribute("expired", e.getMessage());

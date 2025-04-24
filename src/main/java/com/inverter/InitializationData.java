@@ -25,7 +25,6 @@ public class InitializationData implements CommandLineRunner {
 	}
 
 	@Transactional
-	@Override
 	public void run(String... args) throws Exception {
 		var roles = new ArrayList<Role>();
 		Role role = null;

@@ -21,6 +21,9 @@ public class TokenServiceImpl implements TokenService {
 	@Value("${jwt.secret}")
 	private String secret;
 	
+	@Value("${zone.off.set}")
+	private String zoneOffSet;
+	
 	static final String ISSUE = "inverterApi";
 	static final String ISSUE_ACTIVATION = "inverterApiActivationToken";
 	
@@ -34,7 +37,7 @@ public class TokenServiceImpl implements TokenService {
                 .withClaim("id", usuario.getId())
                 .withExpiresAt(LocalDateTime.now()
                         .plusMinutes(expiration)
-                        .toInstant(ZoneOffset.of("-03:00"))
+                        .toInstant(ZoneOffset.of(zoneOffSet))
                 ).sign(Algorithm.HMAC256(secret));
     }
 	
@@ -46,7 +49,7 @@ public class TokenServiceImpl implements TokenService {
                 .withClaim("id", usuario.getId())
                 .withExpiresAt(LocalDateTime.now()
                         .plusMinutes(ONE_DAY_MIN)
-                        .toInstant(ZoneOffset.of("-03:00"))
+                        .toInstant(ZoneOffset.of(zoneOffSet))
                 ).sign(Algorithm.HMAC256(secret));
     }
 

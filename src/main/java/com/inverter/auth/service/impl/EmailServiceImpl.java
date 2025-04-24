@@ -4,9 +4,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import com.inverter.auth.exception.SecurityException;
 import com.inverter.auth.service.EmailService;
+import com.inverter.auth.service.MessageService;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -15,6 +18,8 @@ import jakarta.mail.internet.MimeMessage;
 public class EmailServiceImpl implements EmailService {
 
     private JavaMailSender mailSender;
+    private TemplateEngine templateEngine;
+    private MessageService msg;
     
     @Value("${spring.mail.username}")
     private String fromEmail;
@@ -22,9 +27,11 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.base.url}")
     private String baseUrl;
     
-    public EmailServiceImpl(JavaMailSender mailSender) {
+    public EmailServiceImpl(JavaMailSender mailSender, TemplateEngine templateEngine, MessageService msg) {
     	this.mailSender = mailSender;
-    }
+    	this.templateEngine = templateEngine;
+    	this.msg = msg;
+    } 
     
     public void sendActivationEmail(String to, String token) throws SecurityException {
         try {
@@ -33,26 +40,19 @@ public class EmailServiceImpl implements EmailService {
             
             helper.setFrom(fromEmail);
             helper.setTo(to);
-            helper.setSubject("Ativação de conta - Sistema Attendance");
+            helper.setSubject(msg.get("user.auth.email.activation.title"));
             
-            String activationLink = baseUrl + "/api/auth/user/activate?token=" + token;
+            Context context = new Context();
+            context.setVariable("activationLink", baseUrl + "/activate?token=" + token);
+            context.setVariable("userName", to);
             
-            String htmlContent = """
-                    <h1>Bem-vindo ao Sistema Attendance!</h1>
-                    <p>Olá %s,</p>
-                    <p>Obrigado por se registrar em nosso sistema. Para ativar sua conta, por favor clique no link abaixo:</p>
-                    <p><a href='%s'>%s</a></p>
-                    <p>Este link é válido por 24 horas.</p>
-                    <p>Se você não solicitou este registro, por favor ignore este email.</p>
-                    <p>Atenciosamente,<br/>Equipe Attendance</p>
-                    """.formatted(to, activationLink, activationLink);
-            
-            helper.setText(htmlContent, true);
+            String content = templateEngine.process("activationEmail", context);
+            helper.setText(content, true);
             
             mailSender.send(message);
             
         } catch (MessagingException e) {
-            throw new SecurityException("Erro ao enviar email de ativação: "+e.getMessage());
+        	 throw new SecurityException(msg.get("user.auth.email.activation.send.error", new Object[]{e.getMessage()}));
         }
     }
 }

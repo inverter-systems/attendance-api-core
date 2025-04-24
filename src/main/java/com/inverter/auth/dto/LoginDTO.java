@@ -12,9 +12,9 @@ import jakarta.validation.constraints.NotEmpty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record LoginDTO(
 		
-	@NotEmpty(message = "Invalid Login! Username cannot be empty or null!")
+	@NotEmpty(message = "{user.auth.user.error.invalid.username}")
 	String username,
-	@NotEmpty(message = "Invalid Login! Password cannot be empty or null!")
+	@NotEmpty(message = "{user.auth.user.error.invalid.password}") 
 	@JsonProperty(access = Access.WRITE_ONLY)
 	String password,
 	String token,
