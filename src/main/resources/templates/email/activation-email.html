@@ -3,17 +3,35 @@
 <head>
     <title th:text="#{template.email.activation.account}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<style>
+		.activate-button {
+		     display: inline-block;
+		     background-color: #4F46E5;
+		     color: #ffffff !important;
+		     text-decoration: none;
+		     padding: 12px 24px;
+		     border-radius: 8px;
+		     font-weight: bold;
+		     transition: background-color 0.3s ease;
+		   }
+		   .activate-button:hover {
+		     background-color: #3730a3; /* darkened #4F46E5 */
+		   }
+	</style>
 </head>
 <body>
     <h1 th:text="#{template.email.activation.account.welcome.title}">&nbsp</h1>
     <p th:text="#{template.email.activation.account.text.hello}"></p><span th:text="${userName}"></span>,</p>
     <p th:text="#{template.email.activation.account.text}"></p>
     <p>
-        <a th:href="${activationLink}" th:text="${activationLink}"></a>
+        <a class="activate-button"  th:href="${activationLink}" th:text="#{template.email.activation.account.text.button}"></a>
     </p>
     <p th:text="#{template.email.activation.account.text.valid.link}"></p>
     <p th:text="#{template.email.activation.account.text.ignore.email}"></p>
-    <p th:text="#{template.email.activation.account.text.yours.sincerely}"></p>
-	<p th:text="#{template.email.activation.account.text.team}"></p>
+    <p th:text="#{template.email.text.yours.sincerely}"></p>
+	<p th:text="#{template.email.text.team}"></p>
 </body>
 </html>
+
+

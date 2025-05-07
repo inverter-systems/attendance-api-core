@@ -27,11 +27,3 @@ CREATE TABLE IF NOT EXISTS users_roles (
 	CONSTRAINT users_roles_roles_fk FOREIGN KEY (role_id) REFERENCES roles(id),
 	CONSTRAINT users_roles_users_fk FOREIGN KEY (user_id) REFERENCES users(id)	
 );
-
-CREATE TABLE IF NOT EXISTS activation_token (
-	token varchar NOT NULL,
-	user_id int8 NOT NULL,
-	created_at timestamp(6) NULL,	
-	CONSTRAINT activation_token_pkey PRIMARY KEY (token),
-	CONSTRAINT activation_token_users_fk FOREIGN KEY (user_id) REFERENCES users(id)
-);

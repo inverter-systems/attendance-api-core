@@ -19,7 +19,13 @@ import com.inverter.auth.FilterToken;
 @EnableWebSecurity
 public class SecurityConfiguration {
 	
-	 static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {"/api/auth", "/api/auth/user", "/api/auth/user/activate"};
+	 static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
+			 "/api/auth",
+			 "/api/auth/user", 
+			 "/api/auth/user/activate", 
+			 "/api/auth/user/forgot-password", 
+			 "/api/auth/user/reset-password",
+			 "/api/auth/user/reset-password-ui"};
 
      static final String [] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {"/users/test"};
 

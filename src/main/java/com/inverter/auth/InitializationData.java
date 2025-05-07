@@ -1,4 +1,4 @@
-package com.inverter;
+package com.inverter.auth;
 
 import java.util.ArrayList;
 

@@ -11,6 +11,9 @@ public interface UserService {
 	Optional<User> findByEmail(String email);
 	Optional<User> findByUsername(String name);
 	User activationAcount(String token) throws SecurityException;
+	User resetPasswordEmailToken(String email) throws SecurityException ;
+	User resetPassword(String token, String newPassword) throws SecurityException;
+	
 	
 }
 	

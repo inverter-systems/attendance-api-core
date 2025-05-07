@@ -10,11 +10,6 @@
     "description": "A description for 'jwt.secret'"
   },
   {
-    "name": "jwt.expiration.min",
-    "type": "java.lang.String",
-    "description": "A description for 'jwt.expiration.min'"
-  },
-  {
     "name": "app.base.url",
     "type": "java.lang.String",
     "description": "A description for 'app.base.url'"
@@ -38,5 +33,20 @@
     "name": "locale.mask.datetime",
     "type": "java.lang.String",
     "description": "A description for 'locale.mask.datetime'"
+  },
+  {
+    "name": "jwt.expiration.user.min",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.expiration.user.min'"
+  },
+  {
+    "name": "jwt.expiration.user.activation.min",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.expiration.user.activation.min'"
+  },
+  {
+    "name": "jwt.expiration.user.reset.password.min",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.expiration.user.reset.password.min'"
   }
 ]}

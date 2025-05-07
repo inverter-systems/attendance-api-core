@@ -1,8 +1,8 @@
 package com.inverter.auth.service.impl;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -10,13 +10,20 @@ import org.springframework.stereotype.Service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.inverter.auth.entity.User;
+import com.inverter.auth.enums.IssueEnum;
 import com.inverter.auth.service.TokenService;
 
 @Service
 public class TokenServiceImpl implements TokenService {
 	
-	@Value("${jwt.expiration.min}")
-	private Integer expiration;
+	@Value("${jwt.expiration.user.min}")
+	private Integer expirationUser;
+	
+	@Value("${jwt.expiration.user.activation.min}")
+	private Integer expirationActivation;
+	
+	@Value("${jwt.expiration.user.reset.password.min}")
+	private Integer expirationResetPassword;
 	
 	@Value("${jwt.secret}")
 	private String secret;
@@ -24,52 +31,46 @@ public class TokenServiceImpl implements TokenService {
 	@Value("${zone.off.set}")
 	private String zoneOffSet;
 	
-	static final String ISSUE = "inverterApi";
-	static final String ISSUE_ACTIVATION = "inverterApiActivationToken";
-	
-	static final Integer ONE_DAY_MIN = 60*24;
-
-	@Override
-    public String gerarToken(User usuario) {
+    public String buildUserToken(User usuario) {
+    	var expiration = ZonedDateTime.now(ZoneId.of(zoneOffSet)).plusMinutes(expirationUser).toInstant();
         return JWT.create()
-                .withIssuer(ISSUE)
+                .withIssuer(IssueEnum.ISSUE.getDesc())
                 .withSubject(usuario.getUsername())
                 .withClaim("id", usuario.getId())
-                .withExpiresAt(LocalDateTime.now()
-                        .plusMinutes(expiration)
-                        .toInstant(ZoneOffset.of(zoneOffSet))
-                ).sign(Algorithm.HMAC256(secret));
+                .withExpiresAt(expiration)
+                .sign(Algorithm.HMAC256(secret));
     }
 	
-	@Override
-    public String gerarActivationToken(User usuario) {
+    public String buildActivationToken(User usuario) {
+    	var expiration = ZonedDateTime.now(ZoneId.of(zoneOffSet)).plusMinutes(expirationActivation).toInstant();
         return JWT.create()
-                .withIssuer(ISSUE_ACTIVATION)
+                .withIssuer(IssueEnum.ISSUE_ACTIVATION.getDesc())
                 .withSubject(usuario.getUsername())
                 .withClaim("id", usuario.getId())
-                .withExpiresAt(LocalDateTime.now()
-                        .plusMinutes(ONE_DAY_MIN)
-                        .toInstant(ZoneOffset.of(zoneOffSet))
-                ).sign(Algorithm.HMAC256(secret));
+                .withExpiresAt(expiration)
+                .sign(Algorithm.HMAC256(secret));
+    }
+    
+    public String buildPasswordResetToken(User usuario) {
+    	var expiration = ZonedDateTime.now(ZoneId.of(zoneOffSet)).plusMinutes(expirationResetPassword).toInstant();
+        return JWT.create()
+                .withIssuer(IssueEnum.ISSUE_RESET_PASSWORD.getDesc())
+                .withSubject(usuario.getUsername())
+                .withClaim("id", usuario.getId())
+                .withExpiresAt(expiration)
+                .sign(Algorithm.HMAC256(secret));
     }
 
-	@Override
-    public String getSubject(String token) {
+    public String getSubject(String token, IssueEnum issue) {
         return JWT.require(Algorithm.HMAC256(secret))
-                .withIssuer(ISSUE)
+                .withIssuer(issue.getDesc())
                 .build().verify(token).getSubject();
 
     }
 	
-	public Instant getExpires(String token) {
+	public Instant getExpires(String token, IssueEnum issue) {
 		return JWT.require(Algorithm.HMAC256(secret))
-				.withIssuer(ISSUE)
-				.build().verify(token).getExpiresAtAsInstant();
-	}
-	
-	public Instant getExpiresActivationAccount(String token) {
-		return JWT.require(Algorithm.HMAC256(secret))
-				.withIssuer(ISSUE_ACTIVATION)
+				.withIssuer(issue.getDesc())
 				.build().verify(token).getExpiresAtAsInstant();
 	}
 }
