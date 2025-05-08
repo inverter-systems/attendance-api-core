@@ -38,10 +38,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Value("${zone.off.set}")
 	private String zoneOffSet;
-	
-	private final String tokenExpiredError = msg.get("user.auth.token.error.expired");
-    private final String tokenDecodeError = msg.get("user.auth.token.error.decode"); 
-    private final String tokenSignatureError = msg.get("user.auth.token.error.signature");
 
 	public UserServiceImpl(UserRepository repo, TokenService tokenService,
 			EmailService emailService, MessageService msg,
@@ -95,11 +91,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 			return user;
 		} catch (TokenExpiredException e) {
-			throw new SecurityException(tokenExpiredError);	
+			throw new SecurityException(msg.get("user.auth.token.error.expired"));	
 		} catch (JWTDecodeException e) {
-			throw new SecurityException(tokenDecodeError);
+			throw new SecurityException(msg.get("user.auth.token.error.decode"));
 	    } catch (SignatureVerificationException e) {
-	    	throw new SecurityException(tokenSignatureError);
+	    	throw new SecurityException(msg.get("user.auth.token.error.signature"));
 	    } catch (Exception e) {
 			throw new SecurityException(
 					msg.get("user.auth.token.ativacao.generic.error", new Object[] { e.getMessage() }));
@@ -129,7 +125,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		try {
 			var expirationToken = tokenService.getExpires(token, IssueEnum.ISSUE_RESET_PASSWORD);
 			if (expirationToken.isBefore(LocalDateTime.now().toInstant(ZoneOffset.of(zoneOffSet)))) {
-				throw new SecurityException(tokenExpiredError);
+				throw new SecurityException(msg.get("user.auth.token.error.expired"));
 			}
 		
 			var subject = tokenService.getSubject(token, IssueEnum.ISSUE_RESET_PASSWORD);
@@ -141,11 +137,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 			return user;
 		} catch (TokenExpiredException e) {
-			throw new SecurityException(tokenExpiredError);	
+			throw new SecurityException(msg.get("user.auth.token.error.expired"));	
 		} catch (JWTDecodeException e) {
-			throw new SecurityException(tokenDecodeError);
+			throw new SecurityException(msg.get("user.auth.token.error.decode"));
 	    } catch (SignatureVerificationException e) {
-	    	throw new SecurityException(tokenSignatureError);
+	    	throw new SecurityException(msg.get("user.auth.token.error.signature"));
 	    } catch (Exception e) {
 	    	throw new SecurityException(
 					msg.get("user.auth.email.reset.password.error", new Object[] { e.getMessage() }));
